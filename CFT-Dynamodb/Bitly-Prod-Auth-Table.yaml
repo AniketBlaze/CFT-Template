@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Parameters:
+  Owner:
+    Type: String
+    Description: Owner Name for project
+  Environment:
+    Type: String
+    Description: Enviroment Name for project
+Resources:
+  AuthDynamoDBtable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName:
+        Fn::Sub: ${Environment}-bitly-auth-table
+      PrimaryKey:
+        Name: token
+        Type: String
+      Tags:
+        Project: Bitly
+        Owner Name:
+          Ref: Owner
+        Environment:
+          Ref: Environment
+        Application: Bitly
+      SSESpecification:
+        SSEEnabled: true
+        SSEType: KMS
+
+Outputs:
+  Tablename:
+    Description: table Name
+    Value:
+      Ref: AuthDynamoDBtable
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-tablename
+  AuthDynamoDbTable:
+    Description: Role for lambda
+    Value:
+      Fn::GetAtt:
+      - AuthDynamoDBtable
+      - Arn
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-AuthDynamoDBtable

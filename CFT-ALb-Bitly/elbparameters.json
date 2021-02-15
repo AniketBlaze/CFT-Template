@@ -1,0 +1,110 @@
+      [
+               {
+                   "ParameterKey": "Owner",
+                   "ParameterValue": "Linda D"
+               },
+               {
+                   "ParameterKey": "ExportGetUserbycampaignLambdaStack",
+                   "ParameterValue": "bitly-prod-getusercampaign-lambda"
+               },
+ {
+                   "ParameterKey": "ExportuserstatuslambdaStack",
+                   "ParameterValue": "bitly-prod-userstatus-lambda"
+               },
+               {
+                   "ParameterKey": "ExportCreateCampaignLambdaStack",
+                   "ParameterValue": "bitly-prod-createcampaign-lambda"			
+               },
+               {
+                   "ParameterKey": "ExportOptionlambdastackname",
+                   "ParameterValue": "bitly-prod-optionhandler-lambda"
+               },
+               {
+                   "ParameterKey": "ExportDownloadReportLambdaStack",
+                   "ParameterValue": "bitly-prod-download-report-lambda"
+               },
+               {
+                   "ParameterKey": "ExportUploadEkycDocslambdastack",
+                   "ParameterValue": "bitly-prod-uploadekyc-lambda"
+               },
+               {
+                   "ParameterKey": "ExportSendReminderlambdastack",
+                   "ParameterValue": "bitly-prod-process-sendreminder-lambda"
+               },
+               {
+                   "ParameterKey": "ExportGenerateOtpLambdaStack",
+                   "ParameterValue": "bitly-prod-genotp-lambda"
+               },
+               {
+                   "ParameterKey": "BucketName",
+                   "ParameterValue": "underlay-alb-access-logs-bucket-0"
+               },
+               {
+                   "ParameterKey": "VpcID",
+                   "ParameterValue": "vpc-01a7139161ccf5497"
+               },
+               {
+                   "ParameterKey": "ExportAdminloginLambdaStack",
+                   "ParameterValue": "bitly-prod-login-lambda"
+               },
+               {
+                   "ParameterKey": "CertificatManagerArn",
+                   "ParameterValue": "arn:aws:acm:ap-south-1:251899213637:certificate/0f445991-de02-4dc0-8be4-8f9fc54b242c"
+               },
+               {
+                   "ParameterKey": "ExportAdminlogoutLambdaStack",
+                   "ParameterValue": "bitly-prod-logout-lambda"
+               },
+               {
+                   "ParameterKey": "ExportSaveuserdatalambdalambdaStack",
+                   "ParameterValue": "bitly-prod-process-saveuser-lambda"
+               },
+               {
+                   "ParameterKey": "ExportStackNameSG",
+                   "ParameterValue": "Bitly-Prod-SecurityGroup"
+               },
+               {
+                   "ParameterKey": "ExporcampaignstatusLambdaStack",
+                   "ParameterValue": "bitly-prod-campaignstatus-lambda"
+               },
+               {
+                   "ParameterKey": "ExportDeleteCampaignLambdaStack",
+                   "ParameterValue": "bitly-prod-deletecampaign-lambda"
+               },
+               {
+                   "ParameterKey": "ExportGetUserPrefilledDatalambdaStack",
+                   "ParameterValue": "bitly-prod-getuserprefilled-lambda"
+               },
+               {
+                   "ParameterKey": "ExportCampaignlistlambdaStack",
+                   "ParameterValue": "bitly-prod-listcampign-lambda"
+               },
+               {
+                   "ParameterKey": "ExportProcessCsvStartLambdastack",
+                   "ParameterValue": "bitly-prod-process-csvstarthndlr-lambda"
+               },
+               {
+                   "ParameterKey": "SubnetID2",
+                   "ParameterValue": "subnet-0dbf1c3ab293d99e1"
+               },
+               {
+                   "ParameterKey": "SubnetID1",
+                   "ParameterValue": "subnet-02aaa7c35535ed6f3"
+               },
+               {
+                   "ParameterKey": "ExportDownloadKycdocslambdaStack",
+                   "ParameterValue": "bitly-prod-downloadkyc-lambda"
+               },
+               {
+                   "ParameterKey": "ExportGeneratePreSignedUrllambdastack",
+                   "ParameterValue": "bitly-prod-genurl-lambda"
+               },
+               {
+                   "ParameterKey": "ExportValidateUserOtplambdastack",
+                   "ParameterValue": "bitly-prod-validateotp-lambda"
+               },
+               {
+                   "ParameterKey": "Environment",
+                   "ParameterValue": "Production"
+               }
+           ]

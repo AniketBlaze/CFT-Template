@@ -1,0 +1,202 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Parameters:
+  ExportStackUserTableName:
+    Description: The name userdb table name
+    Type: String
+  ExportStackCampaignTableName:
+    Description: The name CampaignTable name
+    Type: String
+  ExportStackAuthTableName:
+    Description: The name AuthTable name
+    Type: String
+  ExportStackLogsTableName:
+    Description: The name LogsTable name
+    Type: String
+  # ExportStackNameSG:
+  #   Description: Name for Security group
+  #   Type: String
+  Owner:
+    Type: String
+    Description: Owner Name for project
+  Environment:
+    Description: Name of Env
+    Type: String
+  # SubnetID1:
+  #   Type: String
+  #   Description: The Subnet for Lambda
+  # SubnetID2:
+  #   Type: String
+  #   Description: The Subnet for Lambda
+  DocBucketName:
+    Type: String
+    Default: bitly-prod-docs
+    Description: The Bucket Name to store the images
+  EndUserUrl:
+    Type: String
+    Default: https://k.hdfclife.com/u
+    Description: The Bucket Name to store the images
+  KmsKeyArn:
+    Type: String
+    Description: The KEY used by DynamoDb to encrypt
+  LambdaKmsKeyArn:
+    Type: String
+    Description: The KEY used by Lambda to encrypt
+Resources:
+  AdminLoginLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: bitly-${Environment}-adminlogin-lambda
+      Handler: com.hdfc.life.login.handler.LoginHandler::adminLoginRequestHandler
+      Runtime: java8
+      CodeUri: s3://common-prod-sam-artifact/imageupload-1.1.10.jar
+      MemorySize: 512
+      Timeout: 900
+      Environment:
+        Variables:
+          REGION:
+            Ref: AWS::Region
+          kms_key_arn:
+            Ref: KmsKeyArn
+          bucket_name:
+            Ref: DocBucketName
+      Role:
+        Fn::GetAtt:
+        - AdminLoginLambdaRole
+        - Arn
+      KmsKeyArn:
+        Ref: LambdaKmsKeyArn
+      # VpcConfig:
+      #   SecurityGroupIds:
+      #   - Fn::ImportValue:
+      #       Fn::Sub: ${ExportStackNameSG}-SecurityGroup
+      #   SubnetIds:
+      #   - Ref: SubnetID1
+      Tags:
+        Project: Bitly
+        Owner:
+          Ref: Owner
+        Environment:
+          Ref: Environment
+        Application: Bitly
+  AdminLoginLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::Sub: bitly-${Environment}-adminlogin-lambda
+      Principal: elasticloadbalancing.amazonaws.com
+    DependsOn: AdminLoginLambda
+  AdminLoginLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName:
+        Fn::Sub: bitly-${Environment}-adminlogin-role
+      Path: /
+      Tags:
+      - Key: Application
+        Value: Bitly
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+      - arn:aws:iam::aws:policy/AWSKeyManagementServicePowerUser
+      - arn:aws:iam::aws:policy/AmazonSNSFullAccess
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - sts:AssumeRole
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+      Policies:
+      - PolicyName: CW-Logs
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:*
+            Resource: '*'
+      - PolicyName: Lambda-Invoke
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - lambda:InvokeAsync
+            - lambda:InvokeFunction
+            Resource: '*'
+      - PolicyName: S3-CrudAccess
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - s3:GetObject
+            - s3:ListBucket
+            - s3:GetBucketLocation
+            - s3:GetObjectVersion
+            - s3:PutObject
+            - s3:PutObjectAcl
+            - s3:GetLifecycleConfiguration
+            - s3:PutLifecycleConfiguration
+            - s3:DeleteObject
+            Resource:
+            - Fn::Sub: arn:${AWS::Partition}:s3:::${DocBucketName}
+            - Fn::Sub: arn:${AWS::Partition}:s3:::${DocBucketName}/*
+      - PolicyName: DynamoDb-Access
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - dynamodb:GetItem
+            - dynamodb:DeleteItem
+            - dynamodb:PutItem
+            - dynamodb:Scan
+            - dynamodb:Query
+            - dynamodb:UpdateItem
+            - dynamodb:BatchWriteItem
+            - dynamodb:BatchGetItem
+            - dynamodb:DescribeTable
+            - dynamodb:GetRecords
+            - dynamodb:Scan
+            - dynamodb:UpdateTable
+            Resource:
+            - Fn::ImportValue:
+                Fn::Sub: ${ExportStackUserTableName}-UserDynamoDbTable
+            - Fn::ImportValue:
+                Fn::Sub: ${ExportStackCampaignTableName}-CampaignDynamodbTable
+            - Fn::ImportValue:
+                Fn::Sub: ${ExportStackAuthTableName}-AuthDynamoDBtable
+            - Fn::ImportValue:
+                Fn::Sub: ${ExportStackLogsTableName}-LogsDynamoDbTable
+  AdminLoginLambdaRolePolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: ec2-permission
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - ec2:DescribeNetworkInterfaces
+          - ec2:DeleteNetworkInterface
+          - ec2:DeleteNetworkInterface
+          Resource: '*'
+      Roles:
+      - Fn::Sub: bitly-${Environment}-adminlogin-role
+    DependsOn: AdminLoginLambdaRole
+Outputs:
+  AdminLoginLambda:
+    Description: Lambda for login user
+    Value:
+      Fn::GetAtt:
+      - AdminLoginLambda
+      - Arn
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-AdminLoginLambda

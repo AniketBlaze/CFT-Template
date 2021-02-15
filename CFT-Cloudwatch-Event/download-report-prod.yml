@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  # SubnetID1:
+  #   Type: String
+  #   Description: The Subnet for Lambda
+  # VpcID:
+  #   Type: String
+  #   Description: The VPC for Lambda 
+  # ExportStackNameSG:
+  #   Type: String
+  #   Description: Security group for ecs service  
+  RoleNameARN:
+    Type: String
+    Description: task role
+  Environment:
+    Description: Name of Env
+    Type: String
+  # ClusterArn:
+  #   Description: cluster arn 
+  #   Type: String 
+  # Securitygroup:
+  #   Type: String 
+  # taskdefinationcsvarn:
+  #   Type: String 
+  # taskdefinationsendsmsarn:
+  #   Type: String                
+
+Resources: 
+  Taskdefinationfordownloadreport:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      ContainerDefinitions:
+        - Name: bitly-prod-download-report
+          Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/bitly-prod-download-report:latest
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: /ecs/bitly-prod-download-report
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: ecs
+      Cpu: 4096
+      Memory: 30720
+      NetworkMode: awsvpc
+      RequiresCompatibilities: 
+        - FARGATE
+      ExecutionRoleArn: !Ref RoleNameARN   
+      TaskRoleArn: !Ref RoleNameARN
+      Family: bitly-prod-download-report      

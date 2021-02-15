@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Parameters:
+  OwnerName:
+    Type: String
+    Description: Owner Name for project
+  Environment:
+    Type: String
+    Description: Enviroment Name for project
+Resources:
+  campaignDynamoDBtable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName:
+        Fn::Sub: ${Environment}-bitly-campaign-table
+      PrimaryKey:
+        Name: campaign_name
+        Type: String
+      Tags:
+        Project: HDFC_BITLY
+        Owner Name:
+          Ref: OwnerName
+        Environment:
+          Ref: Environment
+        Application: HDFC-BITLY
+      SSESpecification:
+        SSEEnabled: true
+        SSEType: KMS
+Outputs:
+  Tablename:
+    Description: table Name
+    Value:
+      Ref: campaignDynamoDBtable
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-tablename
+  CampaignDynamodbTable:
+    Description: Role for lambda
+    Value:
+      Fn::GetAtt:
+      - campaignDynamoDBtable
+      - Arn
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-CampaignDynamodbTable
